@@ -1,0 +1,33 @@
+# CellShift run configuration (v0.2: four modules)
+seed: 0
+lines: [K562, RPE1, HepG2, Jurkat]
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  min_cells_per_knockdown: 20
+  n_genes: 2000            # genes measured in all four screens, chosen on training lines only
+splits:
+  unseen_knockdown: {test_frac: 0.2}
+  unseen_line: {}
+  unseen_both: {test_frac: 0.2}
+features:
+  esm2: [esm2_t6_8M_UR50D, esm2_t12_35M_UR50D, esm2_t30_150M_UR50D, esm2_t33_650M_UR50D]
+  coexpression_dim: 64
+  random_dim_matched: true
+models:
+  ridge: {alpha: [0.1, 1, 10, 100]}
+  mlp: {hidden: 512, layers: 2, film: true, epochs: 200, ensemble: 5}
+shift:                     # module 3
+  alpha: 0.1               # 90% intervals
+  intervals: [conformal, ensemble]
+  calibration: [standard, leave_one_line_out, weighted]
+  warning_scores: [knn_distance, ensemble_disagreement]
+  warning_knn_k: 5
+  bad_error_frac: 0.25     # "bad" = worst 25% of errors, for the warning AUROC
+  few_shot_n: [20, 50, 100]
+  few_shot_repeats: 10     # different random picks of the n labelled knockdowns
+  cell_context: true
+eval:
+  top_de: 200
+  recall_k: 20
+  n_boot: 2000

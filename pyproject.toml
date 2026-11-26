@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cellshift"
+version = "0.2.0.dev0"
+description = "Evaluating whether knockdown-effect predictors can be trusted under cell-line shift"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26", "pyyaml>=6", "requests>=2"]
+
+[project.optional-dependencies]
+data = ["anndata>=0.10", "scanpy>=1.10", "pertpy>=0.9", "pandas>=2"]
+models = ["torch>=2.3", "transformers>=4.44"]
+track = ["mlflow>=2.14"]
+demo = ["gradio>=4"]
+dev = ["pytest>=8", "ruff>=0.5"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
